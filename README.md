@@ -56,6 +56,8 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
 ***
 ## 管理实践
 
+[流程不完善的小型团队中如何开展管理工作？](https://github.com/yankj12/blog/issues/15)
+
 [团队中相关有形无形资产的管理](https://github.com/yankj12/blog/issues/10)
 
 [团队协同](https://github.com/yankj12/blog/issues/7)
