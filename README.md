@@ -27,16 +27,6 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
 
 
 ***
-## 管理实践
-
-[团队中相关有形无形资产的管理](https://github.com/yankj12/blog/issues/10)
-
-[团队协同](https://github.com/yankj12/blog/issues/7)
-
-[中小团队团队文档管理](https://github.com/yankj12/blog/issues/6)
-
-
-***
 ## 技术尝试
 
 ### 微服务
