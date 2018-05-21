@@ -34,6 +34,8 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
   - [SpringCloud集成eureka服务注册和服务发现](https://github.com/yankj12/blog/issues/14) 编写初期，待完善 
   - 集成网关服务
 
+- [SpringCloud微服务部署](https://github.com/yankj12/blog/issues/22) 编写初期，待完善
+
 ### docker
 [使用docker部署nginx+tomcat负载均衡](https://github.com/yankj12/blog/issues/2) 编写中，待完善
 
