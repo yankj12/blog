@@ -54,6 +54,7 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
 
 [搭建svnserver](https://github.com/yankj12/blog/issues/11) 编写完成，实践完成
 
+[分布式系统中生成唯一ID](https://github.com/yankj12/blog/issues/24) 编写中，缺少实践，待完善
 
 ***
 ## 管理实践
