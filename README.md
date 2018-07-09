@@ -56,6 +56,9 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
 
 [分布式系统中生成唯一ID](https://github.com/yankj12/blog/issues/24) 编写中，缺少实践，待完善
 
+[池](https://github.com/yankj12/blog/issues/25) 还未开始
+
+
 ***
 ## 管理实践
 
