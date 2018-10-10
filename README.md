@@ -41,6 +41,10 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
 
 [docker安装mysql，进行读写分离](https://github.com/yankj12/blog/issues/8) 还未开始
 
+
+### 持续集成
+[持续集成](./doc/web/continuous-integration.md)
+
 ### 其他技术
 [分库分表](https://github.com/yankj12/blog/issues/12) 待编写
 
