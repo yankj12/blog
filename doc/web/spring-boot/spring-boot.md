@@ -127,6 +127,45 @@ public class HelloWorldController {
 }
 ```
 
+## Spring注解
+
+@RequestParam
+
+```Java
+@RequestMapping("/list")
+public String test(int userId) {
+
+    return "list";
+}
+
+
+@RequestMapping("/list")
+public String test(@RequestParam int userId) {
+
+    return "list";
+}
+```
+
+第一种写法参数为非必传，第二种写法参数为必传。参数名为userId。
+
+第二种写法可以通过@RequestParam(required = false)设置为非必传。因为required值默认是true，所以默认必传。
+
+第二种写法可以通过@RequestParam("userId")或者@RequestParam(value = "userId")指定参数名。
+
+第二种写法可以通过@RequestParam(defaultValue = "0")指定参数默认值
+
+用法如下：
+
+```Java
+@RequestMapping("/list")
+public String test(@RequestParam(value = "userId", defaultValue = "0", required = false) int userId) {
+
+    return "list";
+}
+```
+
+参考自[@RequestParam加与不加的区别](https://blog.csdn.net/u013805360/article/details/79527175)
+
 ## 参考资料
 
 - [SpringBoot官方文档](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/)
