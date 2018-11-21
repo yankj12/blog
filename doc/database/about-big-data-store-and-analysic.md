@@ -147,9 +147,9 @@ https://dev.mysql.com/doc/refman/5.7/en/mysql-cluster-install-linux.html
 1. 首先反对大家做读写分离，关于这方面的原因解释太多次数（增加技术复杂度、可能导致读到落后的数据等），只说一点：99.8%的业务场景没有必要做读写分离，只要做好数据库设计优化 和配置合适正确的主机即可。
 2. Keepalived+MySQL --确实有脑裂的问题，还无法做到准确判断mysqld是否HANG的情况；
 3. DRBD+Heartbeat+MySQL --同样有脑裂的问题，还无法做到准确判断mysqld是否HANG的情况，且DRDB是不需要的，增加反而会出问题；
-3. MySQL Proxy -- 不错的项目，可惜官方半途夭折了，不建议用，无法高可用，是一个写分离；
-4. MySQL Cluster -- 社区版本不支持NDB是错误的言论，商用案例确实不多，主要是跟其业务场景要求有关系、这几年发展有点乱不过现在已经上正规了、对网络要求高；
-5. MySQL + MHA -- 可以解决脑裂的问题，需要的IP多，小集群是可以的，但是管理大的就麻烦，其次MySQL + MMM 的话且坑很多，有MHA就没必要采用MMM
+4. MySQL Proxy -- 不错的项目，可惜官方半途夭折了，不建议用，无法高可用，是一个写分离；
+5. MySQL Cluster -- 社区版本不支持NDB是错误的言论，商用案例确实不多，主要是跟其业务场景要求有关系、这几年发展有点乱不过现在已经上正规了、对网络要求高；
+6. MySQL + MHA -- 可以解决脑裂的问题，需要的IP多，小集群是可以的，但是管理大的就麻烦，其次MySQL + MMM 的话且坑很多，有MHA就没必要采用MMM
 
 建议：
 
@@ -160,6 +160,24 @@ https://dev.mysql.com/doc/refman/5.7/en/mysql-cluster-install-linux.html
 上述所有的内容都要依据公司内部的业务场景、数据量、访问量、并发量、高可用的要求、DBA人群的数量等 综合权衡
 
 [MySQL集群的几种方案](https://www.cnblogs.com/pangguoming/p/8241007.html)
+
+## PostgreSQL集群
+
+### PG参考文档一
+
+[PostgreSQL的集群技术比较](https://blog.csdn.net/hxpjava1/article/details/80366841)
+
+### PG参考文档二
+
+[PG的两种集群技术：Pgpool-II与Postgres-XL](https://segmentfault.com/a/1190000007012082)
+
+### PG参考文档三
+
+[postgresql 集群和同步以及企业解决方案](http://panyongzheng.iteye.com/blog/2211073)
+
+### PG参考文档四
+
+[Postgresql集群搭建与PostGIS安装](https://blog.csdn.net/fct2001140269/article/details/80812356)
 
 ## MPP
 
