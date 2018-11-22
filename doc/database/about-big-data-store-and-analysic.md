@@ -159,7 +159,121 @@ https://dev.mysql.com/doc/refman/5.7/en/mysql-cluster-install-linux.html
 
 上述所有的内容都要依据公司内部的业务场景、数据量、访问量、并发量、高可用的要求、DBA人群的数量等 综合权衡
 
+>脑裂\
+\
+在高可用（HA）系统中，当联系2个节点的“心跳线”断开时，本来为一整体、动作协调的HA系统，就分裂成为2个独立的个体。由于相互失去了联系，都以为是对方出了故障。两个节点上的HA软件像“裂脑人”一样，争抢“共享资源”、争起“应用服务”，就会发生严重后果——或者共享资源被瓜分、2边“服务”都起不来了；或者2边“服务”都起来了，但同时读写“共享存储”，导致数据损坏（常见如数据库轮询着的联机日志出错）。\
+\
+参考 [脑裂](../distributed-system/brain-split.md)
+
 [MySQL集群的几种方案](https://www.cnblogs.com/pangguoming/p/8241007.html)
+
+### MySQL集群参考文档五
+
+总结：
+
+目前高可用方案可以一定程度上实现数据库的高可用，比如前面文章介绍的MMM，heartbeat+drbd，Cluster等。还有percona的Galera Cluster等。这些高可用软件各有优劣。在进行高可用方案选择时，主要是看业务还有对数据一致性方面的要求。最后出于对数据库的高可用和数据一致性的要求，推荐使用MHA架构。
+
+[MySQL高可用架构之MHA](https://www.cnblogs.com/gomysql/p/3675429.html)
+
+简介：
+
+MHA（Master High Availability）目前在MySQL高可用方面是一个相对成熟的解决方案，它由日本DeNA公司youshimaton（现就职于Facebook公司）开发，是一套优秀的作为MySQL高可用性环境下故障切换和主从提升的高可用软件。在MySQL故障切换过程中，MHA能做到在0~30秒之内自动完成数据库的故障切换操作，并且在进行故障切换的过程中，MHA能在最大程度上保证数据的一致性，以达到真正意义上的高可用。
+
+**该软件由两部分组成：MHA Manager（管理节点）和MHA Node（数据节点）**。MHA Manager可以单独部署在一台独立的机器上管理多个master-slave集群，也可以部署在一台slave节点上。MHA Node运行在每台MySQL服务器上，MHA Manager会定时探测集群中的master节点，当master出现故障时，它可以自动将最新数据的slave提升为新的master，然后将所有其他的slave重新指向新的master。整个故障转移过程对应用程序完全透明。
+
+在MHA自动故障切换过程中，MHA试图从宕机的主服务器上保存二进制日志，最大程度的保证数据的不丢失，但这并不总是可行的。例如，如果主服务器硬件故障或无法通过ssh访问，MHA没法保存二进制日志，只进行故障转移而丢失了最新的数据。使用MySQL 5.5的半同步复制，可以大大降低数据丢失的风险。MHA可以与半同步复制结合起来。如果只有一个slave已经收到了最新的二进制日志，MHA可以将最新的二进制日志应用于其他所有的slave服务器上，因此可以保证所有节点的数据一致性。
+
+目前MHA主要支持一主多从的架构，**要搭建MHA,要求一个复制集群中必须最少有三台数据库服务器**，一主二从，即一台充当master，一台充当备用master，另外一台充当从库，因为至少需要三台服务器，出于机器成本的考虑，淘宝也在该基础上进行了改造，目前淘宝TMHA已经支持一主一从。另外对于想快速搭建的可以参考：[MHA快速搭建](http://www.cnblogs.com/gomysql/p/6547797.html)
+
+我们自己使用其实也可以使用1主1从，但是master主机宕机后无法切换，以及无法补全binlog。master的mysqld进程crash后，还是可以切换成功，以及补全binlog的。
+
+官方介绍：https://code.google.com/p/mysql-master-ha/
+
+![MySQL HA MHA架构](./about-big-data-store-and-analysic_files/mysql-ha-arch-mha.png)
+
+[Heartbeat+DRBD+MySQL高可用方案](http://www.cnblogs.com/gomysql/p/3674030.html)
+
+1.方案简介
+
+本方案采用Heartbeat双机热备软件来保证数据库的高稳定性和连续性，数据的一致性由DRBD这个工具来保证。默认情况下只有一台mysql在工作，当主mysql服务器出现问题后，系统将自动切换到备机上继续提供服务，当主数据库修复完毕，又将服务切回继续由主mysql提供服务。
+
+2.方案优缺点
+
+优点：安全性高、稳定性高、可用性高，出现故障自动切换。
+
+缺点：只有一台服务器提供服务，成本相对较高，不方便扩展，可能会发生脑裂。
+
+3.软件介绍
+
+Heartbeat介绍
+
+官方站点：http://linux-ha.org/wiki/Main_Page
+
+heartbeat可以资源(VIP地址及程序服务)从一台有故障的服务器快速的转移到另一台正常的服务器提供服务，heartbeat和keepalived相似，heartbeat可以实现failover功能，但不能实现对后端的健康检查
+
+DRBD介绍
+
+官方站点：http://www.drbd.org/
+
+DRBD(DistributedReplicatedBlockDevice)是一个基于块设备级别在远程服务器直接同步和镜像数据的软件，用软件实现的、无共享的、服务器之间镜像块设备内容的存储复制解决方案。它可以实现在网络中两台服务器之间基于块设备级别的实时镜像或同步复制(两台服务器都写入成功)/异步复制(本地服务器写入成功)，相当于网络的RAID1，由于是基于块设备(磁盘，LVM逻辑卷)，在文件系统的底层，所以数据复制要比cp命令更快。DRBD已经被MySQL官方写入文档手册作为推荐的高可用的方案之一
+
+4.方案拓扑
+
+![MySQL 高可用 HeartBaet+DRBD架构](./about-big-data-store-and-analysic_files/mysql-ha-arch-heartbeat-drbd.png)
+
+[MySQL Cluster搭建与测试](http://www.cnblogs.com/gomysql/p/3664783.html)
+
+>MySQL Cluster 优点和缺点\
+优点：\
+1)MySQL Cluster 自动将表分片（或分区）到不同节点上，使数据库可以在低成本的商用硬件上横向扩展，同时保持对应用程序完全应用透明。\
+2)凭借其分布式、无共享架构，MySQL Cluster 可提供 99.999% 的可用性，确保了较强的故障恢复能力和在不停机的情况下执行预定维护的能力。\
+3)MySQL Cluster 让用户可以在解决方案中整合关系数据库技术和 NoSQL 技术中的最佳部分，从而降低成本、风险和复杂性。\
+4)MySQL Cluster 提供实时的响应时间和吞吐量，能满足最苛刻的 Web、电信及企业应用程序的需求。\
+5)具有跨地域复制功能的多站点集群\
+跨地域复制使多个集群可以分布在不同的地点，从而提高了灾难恢复能力和全球 Web 服务的扩展能力。\
+6)为支持持续运营，MySQL Cluster 允许向正在运行的数据库模式中联机添加节点和更新内容，因而能支持快速变化和高度动态的负载。 \
+\
+缺点\
+1)随数据库容量增加，每个数据数据节点需要添加更多的内存，增加使用成本\
+2)牺牲部分sql语言特性。\
+\
+参考 [MySQL Cluster 优点和缺点](https://blog.csdn.net/zdc524/article/details/50522856 )
+
+[MySQL Cluster 常见问题](https://www.mysql.com/products/cluster/faq.html)
+
+Q: Is MySQL Cluster Manager open source software?
+
+A: No. MySQL Cluster Manager is available only as a part of the commercial MySQL Cluster Carrier Grade Edition (CGE) database. To purchase subscriptions or licenses for MySQL Cluster CGE, please contact the MySQL Sales Team.
+
+Q: What is MySQL Cluster Manager?
+
+A: MySQL Cluster Manager is software which simplifies the creation and management of the MySQL Cluster database by automating common management tasks.
+
+收费的可能只是MySQL Cluster Manager而不是MySQL Cluster
+
+Q: MySQL Cluster是否收费
+
+A: MySQL是个公司，其产品有两种license：GPL和commercial Lic。官方网站可下载GPL版本。
+
+ndb的研发很快，更新比较频繁，建议lz用ndb-7.0.x吧
+
+仔细看手册里面关于ndb cluster限制的那一部分，ndb不是通用型数据库产品；对应用、数据库设计有很多特殊要求
+
+[MySQL 高可用架构之MMM](http://www.cnblogs.com/gomysql/p/3671896.html)
+
+简介
+
+MMM（Master-Master replication manager for MySQL）是一套支持双主故障切换和双主日常管理的脚本程序。MMM使用Perl语言开发，主要用来监控和管理MySQL Master-Master（双主）复制，虽然叫做双主复制，但是业务上同一时刻只允许对一个主进行写入，另一台备选主上提供部分读服务，以加速在主主切换时刻备选主的预热，可以说MMM这套脚本程序一方面实现了故障切换的功能，另一方面其内部附加的工具脚本也可以实现多个slave的read负载均衡。
+
+MMM提供了自动和手动两种方式移除一组服务器中复制延迟较高的服务器的虚拟ip，同时它还可以备份数据，实现两节点之间的数据同步等。由于MMM无法完全的保证数据一致性，所以MMM适用于对数据的一致性要求不是很高，但是又想最大程度的保证业务可用性的场景。**对于那些对数据的一致性要求很高的业务，非常不建议采用MMM这种高可用架构**。
+
+MMM项目来自 Google：http://code.google.com/p/mysql-master-master
+
+官方网站为：http://mysql-mmm.org
+
+下面我们通过一个实际案例来充分了解MMM的内部架构，如下图所示。
+
+![MySQL 高可用 MMM架构](./about-big-data-store-and-analysic_files/mysql-ha-arch-mmm.png)
 
 ## PostgreSQL集群
 
@@ -170,6 +284,8 @@ https://dev.mysql.com/doc/refman/5.7/en/mysql-cluster-install-linux.html
 ### PG参考文档二
 
 [PG的两种集群技术：Pgpool-II与Postgres-XL](https://segmentfault.com/a/1190000007012082)
+
+这篇文章经过小数据量对比后推荐`Postgres-XL`
 
 ### PG参考文档三
 
