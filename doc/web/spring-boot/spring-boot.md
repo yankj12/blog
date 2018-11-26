@@ -4,25 +4,35 @@
 
 ## 目录
 
+- [配置](#配置)
+    - [配置端口](#配置端口)
+    - [配置项目根路径](#配置项目根路径)
+    - [多环境配置文件激活属性](#多环境配置文件激活属性)
+    - [application.properties各种配置解释](#application.properties各种配置解释)
+- [注解](#注解)
+    - [跨域访问@CrossOrigin](#跨域访问@CrossOrigin)
+    - [@RequestParam注解](#@RequestParam注解)
+    - [@ComponentScan注解](#@ComponentScan注解)
+- [常见问题](#常见问题)
+- [参考资料](#参考资料)
+
 ## 配置
 
-### server
-
-#### 配置端口
+### 配置端口
 
 ```application.properties
 # 配置端口
 server.port=8020
 ```
 
-#### 配置项目根路径
+### 配置项目根路径
 
 ```application.properties
 # 配置项目根路径
 server.servlet.context-path=/xxx
 ```
 
-##### 配置项目根路径的作用
+#### 配置项目根路径的作用
 
 定义：`server.servlet.context-path= # Context path of the application`. 应用的上下文路径，也可以称为项目路径，是构成url地址的一部分。
 
@@ -51,7 +61,7 @@ public class MQCPContorller {
 
 参考资料[Spring Boot 应用中server.context-path的作用](https://blog.csdn.net/onedaycbfly/article/details/80108129)
 
-##### spring-boot配置文件中server.context-path=/XXXXXXX不起作用：
+#### spring-boot配置文件中server.context-path=/XXXXXXX不起作用：
 
 spring-boot配置文件中`server.context-path=/XXXXXXX`不起作用：原因是更新后写法变成了`server.servlet.context-path=/XXXXXX`，这样写即可
 
@@ -111,7 +121,7 @@ cors是一个w3c标准，它允许浏览器（目前ie8以下还不能被支持�
 
 具体关于cors协议的文章 ，可以参考 [跨域资源共享 CORS 详解](http://www.ruanyifeng.com/blog/2016/04/cors.html) 这篇文章，讲的相当不错。
 
-#### 参考
+#### 跨域访问资料参考
 
 - [Springboot后台设置允许跨域的方法](https://blog.csdn.net/hlp4207/article/details/80870716)
 - [springboot中通过cors协议解决跨域问题](https://www.cnblogs.com/520playboy/p/7306008.html)
@@ -127,7 +137,7 @@ public class HelloWorldController {
 }
 ```
 
-## Spring注解
+## @RequestParam注解
 
 @RequestParam
 
@@ -165,6 +175,88 @@ public String test(@RequestParam(value = "userId", defaultValue = "0", required 
 ```
 
 参考自[@RequestParam加与不加的区别](https://blog.csdn.net/u013805360/article/details/79527175)
+
+### @ComponentScan注解
+
+>ComponentScan做的事情就是告诉Spring从哪里找到bean
+
+Spring Boot项目
+
+总结：
+
+- 如果你的其他包都在使用了@SpringBootApplication注解的main app所在的包及其下级包，则你什么都不用做，SpringBoot会自动帮你把其他包都扫描了
+- 如果你有一些bean所在的包，不在main app的包及其下级包，那么你需要手动加上@ComponentScan注解并指定那个bean所在的包
+
+类`SpringbootIn10StepsApplication`在`com.in28minutes.springboot.basics.springbootin10steps`包下，这个类使用了`@SpringBootApplication`注解，该注解定义了Spring将自动扫描包`com.in28minutes.springboot.basics.springbootin10steps`及其子包下的bean
+
+如果你项目中所有的类都定义在上面的包及其子包下，那你不需要做任何事。
+
+但假如你一个类定义在包`com.in28minutes.springboot.somethingelse`下，则你需要将这个新包也纳入扫描的范围,有两个方案可以达到这个目的。
+
+方案1
+
+定义`@ComponentScan(“com.in28minutes.springboot”)`
+
+这么做扫描的范围扩大到整个父包com.in28minutes.springboot
+
+```Java
+@ComponentScan(“com.in28minutes.springboot”)
+@SpringBootApplication
+public class SpringbootIn10StepsApplication {
+```
+
+方案2
+
+定义分别扫描两个包
+`@ComponentScan({“com.in28minutes.springboot.basics.springbootin10steps”,”com.in28minutes.springboot.somethingelse”})`
+
+```Java
+@ComponentScan({"com.in28minutes.springboot.basics.springbootin10steps","com.in28minutes.springboot.somethingelse"})
+@SpringBootApplication
+public class SpringbootIn10StepsApplication {
+```
+
+参考 [Spring Boot学习笔记1：Spring, Spring Boot中的@Component 和@ComponentScan注解用法介绍](https://blog.csdn.net/Lamb_IT/article/details/80918704)
+
+## 常见问题
+
+### SpringBoot启动报错Caused by: java.lang.NoSuchMethodError: org.springframework.util.Assert.notNull(Ljava/lang/Object;Ljava/util/function/Supplier;)V
+
+报错信息如下：
+
+```Java
+十一月 26, 2018 3:05:44 下午 org.springframework.context.support.GenericApplicationContext refresh
+警告: Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: Failed to process import candidates for configuration class [com.sinosoft.interview.registry.InterviewRegistryApplication]; nested exception is java.lang.NoSuchMethodError: org.springframework.util.Assert.notNull(Ljava/lang/Object;Ljava/util/function/Supplier;)V
+十一月 26, 2018 3:05:44 下午 org.springframework.test.context.TestContextManager prepareTestInstance
+严重: Caught exception while allowing TestExecutionListener [org.springframework.test.context.support.DependencyInjectionTestExecutionListener@6ddf90b0] to prepare test instance [com.sinosoft.interview.registry.MongoTemplateTest@72f926e6]
+java.lang.IllegalStateException: Failed to load ApplicationContext
+	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:124)
+	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:83)
+Caused by: org.springframework.beans.factory.BeanDefinitionStoreException: Failed to process import candidates for configuration class [com.sinosoft.interview.registry.InterviewRegistryApplication]; nested exception is java.lang.NoSuchMethodError: org.springframework.util.Assert.notNull(Ljava/lang/Object;Ljava/util/function/Supplier;)V
+	at org.springframework.context.annotation.ConfigurationClassParser.processDeferredImportSelectors(ConfigurationClassParser.java:561)
+	... 25 more
+Caused by: java.lang.NoSuchMethodError: org.springframework.util.Assert.notNull(Ljava/lang/Object;Ljava/util/function/Supplier;)V
+	at org.springframework.boot.autoconfigure.AutoConfigurationImportSelector.getAttributes(AutoConfigurationImportSelector.java:132)
+```
+
+查了下资料，发现大部分是说jar包冲突导致，想了想就去[Spring官网](https://start.spring.io/)使用start生成了一个pom
+
+添加组件`web`,`mongo`等
+
+重新刷新项目后，正常了
+
+### Path represents URL or has "url:" prefix: [classpath:/templates/
+
+controller中将url映射到了视图，并且`视图名.html`在templates文件夹下是存在的，但是页面报404错误。
+
+最后经过尝试，在pom文件中添加`thymeleaf`依赖后，可以显示页面
+
+```pom
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+```
 
 ## 参考资料
 
