@@ -1,9 +1,14 @@
 # yankj12's blog
+
 yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档。
 
 ***
+
 ## 目录
+
 [文章编写计划](#文章编写计划)
+
+[最近研究规划](#最近研究规划)
 
 [技术尝试](#技术尝试)
 
@@ -12,7 +17,9 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
 [其他](#其他)
 
 ***
+
 ## 文章编写计划
+
 |文章|当前状态|编写计划安排|
 |---|---|---|
 |[SpringCloud 微服务的实践](https://github.com/yankj12/blog/issues/13)| 编写初期，待完善 |2018/4|
@@ -25,11 +32,30 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
 |[消息队列的应用场景](https://github.com/yankj12/blog/issues/9)|编写中，缺少实践，待完善||
 |[搭建svnserver](https://github.com/yankj12/blog/issues/11)|编写完成，实践完成||
 
+***
+
+## 最近研究规划
+
+最近把主要精力放在研究大数据量的存储、容器、一种前端
+
+### 存储
+
+Elasticsearch, TiDB, MySQL集群, MongoDB等。先研究Elasticsearch和MySQL集群
+
+### 容器
+
+学习研究Docker Buildfile
+
+### 前端
+
+自己学习学习Angular，工作过程中学习学习VUE
 
 ***
+
 ## 技术尝试
 
 ### 微服务
+
 - [SpringCloud 微服务的实践](https://github.com/yankj12/blog/issues/13) 编写初期，待完善
   - [SpringCloud集成eureka服务注册和服务发现](https://github.com/yankj12/blog/issues/14) 编写初期，待完善 
   - 集成网关服务
@@ -37,15 +63,17 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
 - [SpringCloud微服务部署](https://github.com/yankj12/blog/issues/22) 编写初期，待完善
 
 ### docker
+
 [使用docker部署nginx+tomcat负载均衡](https://github.com/yankj12/blog/issues/2) 编写中，待完善
 
 [docker安装mysql，进行读写分离](https://github.com/yankj12/blog/issues/8) 还未开始
 
-
 ### 持续集成
+
 [持续集成](./doc/web/continuous-integration.md)
 
 ### 其他技术
+
 [分库分表](https://github.com/yankj12/blog/issues/12) 待编写
 
 [mysql读写分离](https://github.com/yankj12/blog/issues/5) 还未开始
@@ -62,8 +90,8 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
 
 [池](https://github.com/yankj12/blog/issues/25) 还未开始
 
-
 ***
+
 ## 管理实践
 
 [流程不完善的小型团队中如何开展管理工作？](https://github.com/yankj12/blog/issues/15)
@@ -75,6 +103,5 @@ yankj12 零零散散整理的一些技术尝试、管理实践或其他的文档
 [中小团队团队文档管理](https://github.com/yankj12/blog/issues/6)
 
 ***
+
 ## 其他
-
-
