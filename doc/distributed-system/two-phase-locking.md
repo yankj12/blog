@@ -31,6 +31,10 @@ Lock A, Read A, A:=A+100, Write A, Lock B, Unlock A, Read B, Unlock B, Commit;
 
 [两段锁协议(2PL)](https://blog.csdn.net/aigoogle/article/details/25804285)
 
-## zookeeper的2PC事务提交
+## 分布式系统中两阶段锁
 
-参考 [zookeeper的2PC事务提交](https://blog.csdn.net/fu123123fu/article/details/81175680)
+[zookeeper的2PC事务提交](https://blog.csdn.net/fu123123fu/article/details/81175680)
+
+[MySQL如何实现分布式事务​](http://www.cnblogs.com/lsx1993/p/4628830.html)
+
+[对分布式事务及两阶段提交、三阶段提交的理解](https://www.cnblogs.com/AndyAo/p/8228099.html)
