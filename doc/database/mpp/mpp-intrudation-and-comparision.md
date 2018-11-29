@@ -132,3 +132,25 @@ LibrA提供了以下功能：
 LibrA采用Share-nothing架构，由多个拥有独立且互不共享CPU、内存、存储等系统资源的节点组成。在这样的系统架构中，业务数据被分散存储在多个物理节点上，数据分析任务被推送到数据所在位置就近执行，通过控制模块的协调，并行地完成大规模的数据处理工作，实现对数据处理的快速响应。
 
 [FusionInsight LibrA 6.5.RC1 硬件部署和组网方案指南 01](https://support.huawei.com/enterprise/zh/doc/EDOC1100042769)
+
+## 数据仓库选型
+
+公司由小到大，不同阶段数据仓库选型及数据分析方案的选择，可以参考 [易观CTO郭炜：从0到N建立高性价比的大数据平台](http://www.datayuan.cn/article/5854.htm)
+
+## 数据仓库的特性及对比
+
+[Greenplum 特性总结](https://blog.csdn.net/kygoal/article/details/78957032)
+
+[Greenplum 官网](https://greenplum.org/)
+
+[Greenplum vs. Hive vs. Impala](https://db-engines.com/en/system/Greenplum%3BHive%3BImpala)
+
+[MySQL NDB Cluster: Features & Benefits](https://www.mysql.com/cn/products/cluster/features.html)
+
+[MySQL Cluster, Fabric, Cobar 三大集群特性对比](http://blog.51cto.com/bangbangba/1710393)
+
+看完这几篇对比文章后，我的感觉是数据规模比较小，应用可以将数据存mysql中，如果要进行分析，可以使用pg数据库，中间使用etl还是其他方式进行同步都可以。
+
+如果数据规模上来了，要进行数据分析，可以采用Postgres-XL的集群进行分析。应用还是可以采用mysql和微服务的方式，将不同业务模块进行拆分，产生的业务数据，同步到Postgres-XL集群中。
+
+如果数据规模更大些，可能就要采用hadoop或者Greenplum。当然hadoop生态对于硬件资源要求稍微小写，但是业务分析可能需要开发，Greenplum业务分析可能效率更高，但是对于硬件要求比较高。
