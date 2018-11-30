@@ -5,6 +5,7 @@
 ## 目录
 
 - [配置](#配置)
+    - [配置加载顺序](#配置加载顺序)
     - [配置端口](#配置端口)
     - [配置项目根路径](#配置项目根路径)
     - [多环境配置文件激活属性](#多环境配置文件激活属性)
@@ -13,10 +14,34 @@
     - [跨域访问@CrossOrigin](#跨域访问@CrossOrigin)
     - [@RequestParam注解](#@RequestParam注解)
     - [@ComponentScan注解](#@ComponentScan注解)
+- [监控与管理](#监控与管理)
 - [常见问题](#常见问题)
 - [参考资料](#参考资料)
 
 ## 配置
+
+### 配置加载顺序
+
+我们可以通过spring.profiles.active或者是通过maven来实现多环境的支持，但是当团队越来越大，往往不需要让开发人员知道测试环境或是生产环境的细节，而是由各个环境的负责人来集中维护这些信息。那么如果还是以这样的方式存储配置内容，就会存在很多问题
+
+为了能够更加合理地重写个属性的值，SpringBoot使用了下面这种较为特别的属性加载顺序：
+
+1. 命令行中传入的参数。
+2. SPRING_APPLICATION_JSON中的属性。SPRING_APPLICATION_JSON是以JSON格式配置在系统环境变量中的内容。
+3. java:comp/env中的JNDI属性。
+4. java的系统属性，可以通过System.getProperties()获得的内容。
+5. 操作系统的环境变量。
+6. 通过random.*配置的随机属性。
+7. 位于当前应用jar包之外，针对不同{profile}环境的配置文件内容，例如application-{profile}.properties或是YAML定义的配置文件。
+8. 位于当前应用jar包之内，针对不同{profile}环境的配置文件内容，例如application-{profile}.properties或是YAML定义的配置文件。
+9. 位于当前应用jar包之外的application.properties和YAML配置内容。
+10. 位于当前应用jar包之内的application.properties和YAML配置内容。
+11. 在@Configuration注解修改的类中，通过@PropertySource注解定义的属性。
+12. 应用默认属性，使用SpringApplication.setDefailtProperties定义的内容。
+
+优先级按照上面的顺序由高到低，数字越小优先级越高。
+
+可以看到，其中第7项和第9项都是从应用jar包之外读取配置文件，所以，实现外部配置化的原理就是从此切入，为其制定外部配置文件的加载顺序来取代jar包之内的配置内容。
 
 ### 配置端口
 
@@ -217,6 +242,16 @@ public class SpringbootIn10StepsApplication {
 ```
 
 参考 [Spring Boot学习笔记1：Spring, Spring Boot中的@Component 和@ComponentScan注解用法介绍](https://blog.csdn.net/Lamb_IT/article/details/80918704)
+
+## 监控与管理
+
+SpringBoot在Starter PMs中提供了一个特殊依赖模块spring-boot-starter-actuator，能够自动为SpringBoot构建的应用提供一系列用于监控的端点(end points)。同时SpringCloud在实现各个微服务组件的时候，进一步为该模块做了扩展。
+
+spring-boot-starter-actuator提供的原生端点，可以分为三大类：
+
+- 应用配置类
+- 度量指标类
+- 操作控制类
 
 ## 常见问题
 
