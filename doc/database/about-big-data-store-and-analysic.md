@@ -349,6 +349,7 @@ Spark SQL应该还是算做Batching Processing, 中间计算结果需要落地�
 - [大数据基础知识问答----spark篇](https://blog.csdn.net/wangyaninglm/article/details/52403425?utm_source=blogxgwz6)
 - [MPP架构](https://www.cnblogs.com/jianyungsun/p/9261632.html)
 - [MPP(大规模并行处理)简介](https://blog.csdn.net/qq_42189083/article/details/80610092)
+- [presto是什么](https://www.cnblogs.com/sorco/p/7060166.html)
 
 ### Greenplum部分
 
