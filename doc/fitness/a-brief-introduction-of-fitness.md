@@ -104,3 +104,19 @@ Burpee被称为是最有效率、最好的全身健身(full-body exercise)项目
 其实，这个动作也是**Animal Flow**的一种。
 
 参考自 [知乎专栏-比波比跳更高效的燃脂动作，正在席卷全球...](https://zhuanlan.zhihu.com/p/32588883)
+
+## 饮食与健康
+
+diet and health
+
+### 热量单位转换
+
+1千焦(kJ)=238.9卡路里(cal)
+
+1卡(cal)=0.001大卡(kcal)
+
+### 食物热量
+
+食物热量可以参考 [薄荷-食物热量查询](http://www.boohee.com/food/)
+
+### 基础代谢
