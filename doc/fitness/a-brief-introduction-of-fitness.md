@@ -8,6 +8,12 @@
 
 波比跳、开合跳、Side Kick Through、Animal Flow
 
+## 健身组数与强度
+
+参考 [健身组数和强度问题，我该怎么快速增肌？ - 倩Sur的回答 - 知乎](https://www.zhihu.com/question/38091893/answer/534042475)
+
+参考 [增肌来说，每组的8-12rm需要严格执行“rm”吗？ - 陈柏龄的回答 - 知乎](https://www.zhihu.com/question/302322732/answer/541624271)
+
 ## 开合跳
 
 ### 动作
