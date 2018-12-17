@@ -14,6 +14,10 @@
 
 参考 [增肌来说，每组的8-12rm需要严格执行“rm”吗？ - 陈柏龄的回答 - 知乎](https://www.zhihu.com/question/302322732/answer/541624271)
 
+## 健身顺序
+
+参考自 [健身还有顺序？！ 你平时都从哪个部位开始练？](https://www.xiaohongshu.com/discovery/item/5a5d67c64b8845162cc9994b?secondshare=weixin&from=singlemessage&_at=262c39c54b1e6d33d5522743b2f6a1d8714a3)
+
 ## 开合跳
 
 ### 动作
