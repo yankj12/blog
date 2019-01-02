@@ -20,6 +20,13 @@
 
 ## 配置
 
+已经知道 Spring Boot 全局配置文件是 “application.properties”与“application.yml”
+
+那么文件中到底可以配置哪些内容呢？可以参考官方文档：
+
+- [Spring Boot 1.5.9 官方文档](https://docs.spring.io/spring-boot/docs/1.5.9.RELEASE/reference/htmlsingle/#common-application-properties)
+- [Spring Boot 2.0.3 官方文档](https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/#common-application-properties)
+
 ### 配置加载顺序
 
 我们可以通过spring.profiles.active或者是通过maven来实现多环境的支持，但是当团队越来越大，往往不需要让开发人员知道测试环境或是生产环境的细节，而是由各个环境的负责人来集中维护这些信息。那么如果还是以这样的方式存储配置内容，就会存在很多问题
