@@ -293,6 +293,23 @@ controller中将url映射到了视图，并且`视图名.html`在templates文件
 </dependency>
 ```
 
+### 启动报错Field dataBaseDao in DataBaseController required a bean of type 'DataBaseDao' that could not be found
+
+启动SpringBoot时报如下错误
+
+``` Java
+Description:
+
+Field dataBaseDao in com.test.springboot.lucene.ik.controller.DataBaseController required a bean of type 'com.test.springboot.lucene.ik.dao.facade.DataBaseDao' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.test.springboot.lucene.ik.dao.facade.DataBaseDao' in your configuration.
+```
+
+最后发现是因为自己在实现类中没有implement接口，添加接口之后启动正常
+
 ## 参考资料
 
 - [SpringBoot官方文档](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/)
