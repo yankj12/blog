@@ -92,3 +92,21 @@ mysql 自增id和UUID做主键性能分析，及最优方案
 [MySQL 使用自增ID主键和UUID 作为主键的优劣比较详细过程（500W单表）](https://blog.csdn.net/mchdba/article/details/52279523)
 
 [MySQL 使用自增ID（int）主键和UUID（varchar）作为主键的优劣比较](https://blog.csdn.net/HeatDeath/article/details/79833462)
+
+## mysql双主复制中，会有什么缺点，例如主键冲突？
+
+两个数据库做主主，会不会遇上主键冲突的问题，会的话要怎么解决。目前要做主主的库有100多张表。
+
+[mysql双主复制中，会有什么缺点，例如主键冲突？ - 河南-老宋(志强)的回答 - 知乎](https://www.zhihu.com/question/273995784/answer/373472763)
+
+>如果你只是简单的用，建议你还是不要双写。\
+\
+如果你真的想用，那建议从表级的分开，比如某个节点只操作某个表的东西。
+
+[mysql双主复制中，会有什么缺点，例如主键冲突？ - 黄承开的回答 - 知乎](https://www.zhihu.com/question/273995784/answer/372490790)
+
+>多主多写的话，会。\
+1.多主单写。性能冗余。\
+2.主键生成策略针对主数量取模。简单可靠，无法扩展。\
+3.由应用生成主键。需要改造业务代码。\
+4.database mesh。这个就需要架构的改造了。
