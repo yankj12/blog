@@ -95,7 +95,7 @@ public class MQCPContorller {
 
 #### spring-boot配置文件中server.context-path=/XXXXXXX不起作用：
 
-spring-boot配置文件中`server.context-path=/XXXXXXX`不起作用：原因是更新后写法变成了`server.servlet.context-path=/XXXXXX`，这样写即可
+spring-boot配置文件中`server.context-path=/XXXXXXX`不起作用：原因是SpringBoot2.0更新后写法变成了`server.servlet.context-path=/XXXXXX`，这样写即可
 
 ### 多环境配置文件激活属性
 
