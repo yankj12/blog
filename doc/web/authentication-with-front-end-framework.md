@@ -49,3 +49,4 @@ iat是Issued At的意思，就是分发这个Token的时间。每次用户登录
 ## 参考资料
 
 - [现代的前端框架全是通过API获得数据，如何记录用户登录状态？ - 陈龙的回答 - 知乎](https://www.zhihu.com/question/301253397/answer/527408312)
+- [JWT过期刷新问题，实现十五天免登陆](https://zhuanlan.zhihu.com/p/57608281)
