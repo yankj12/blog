@@ -350,3 +350,6 @@ group by t.state, t.county order by height desc;
 ```
 
 ### 第三部分 分区
+
+分区功能（partitioning）将表分割成自治的单元。类似于分片（sharding）
+
