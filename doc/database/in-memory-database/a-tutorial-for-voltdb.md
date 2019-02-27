@@ -21,6 +21,10 @@
       - [加载数据](#%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE)
       - [查询数据库](#%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE%E5%BA%93)
     - [第三部分 分区](#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86-%E5%88%86%E5%8C%BA)
+      - [分区表](#%E5%88%86%E5%8C%BA%E8%A1%A8)
+      - [重复表](#%E9%87%8D%E5%A4%8D%E8%A1%A8)
+    - [第四部分 数据结构更新和稳固性（Durability）](#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%9B%B4%E6%96%B0%E5%92%8C%E7%A8%B3%E5%9B%BA%E6%80%A7durability)
+      - [保存数据库](#%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93)
 
 ## 安装VoltDB
 
@@ -353,3 +357,94 @@ group by t.state, t.county order by height desc;
 
 分区功能（partitioning）将表分割成自治的单元。类似于分片（sharding）
 
+- voltdb根据指定的分区列自动进行分区，不需要你手动分区。
+- 你可以在单服务器上有多个分区或者site。换句话说分区不仅仅是为了扩展数据规模，还提高性能。
+- voltdb不仅将数据分区，也将对数据的处理进行分区，这就是voltdb提高吞吐和并行的原因。
+
+#### 分区表
+
+将分区列作为表结构的一部分就可以对这个表进行分区。分区之后，每条数据在插入时会根据分区列决定插入到哪个分区。比如我们对towns表根据name分区，所有相同name的记录会在一个分区中。
+
+虽然根据name分区可能从数据均匀性方面有一定原因，但是分区的目的是将数据和对数据的处理进行分发。我们很少对相同名称的towns数据进行对比，反而是经常对一个地理区域中的数据进行比较。所以我们根据state分区可以很快速地计算出给定state中最大或者最高的town。
+
+towns和people表都有state列，但是一个使用的是缩写（abbreviation）一个使用的是全称，我们可以使用state_num列进行分区。
+
+```SQL
+PARTITION TABLE towns ON COLUMN state_num;
+
+# 报错信息如下
+VOLTDB ERROR:   Unable to make requested schema change:
+  Unable to change whether table TOWNS is replicated because it is not empty.
+  Unable to change the partition column of table TOWNS because it is not empty.
+
+```
+
+```Shell
+voltadmin shutdown
+```
+
+`voltadmin --shutdown`命令会有序地关闭database不论是单节点还是多节点集群。
+
+使用`FILE`命令重新加载数据结构（带有分区），使用`csvloader`命令加载数据。
+
+分区之后，导入数据的效率也得到了提升。
+
+#### 重复表
+
+之前提到的两个表towns和people都有state name这一列，但是不一致（一个是全称，一个是缩写）。作为替代，我们使用state_num列进行分区和join。
+
+state_num是数字，是美国政府官方的并且唯一的标识符，作为计算很有用，但是大部分日常使用中考虑地名使用的是名字而不是数字。所以有一个一致的名字是有必要的。
+
+我们可以创建一个独立于towns和people表的查找表（lookup table），而非在每个表中修改数据结构。可以使用查找表来为每个state_num提供权威的名称。
+
+```SQL
+CREATE TABLE states (
+  abbreviation VARCHAR(20),
+  state_num TINYINT,
+  name VARCHAR(20),
+  PRIMARY KEY (state_num)
+);
+```
+
+这种类型的查找表在关系型数据库中很常见，它们减少冗余并且提供一致性。这种查找表往往有两个特性，比较小、数据很少变化（或者不变）。
+
+我们可以根据state_num对states表进行分区，但是当查找表数据比较小并且很少更新的时候，更好的做法是将它复制到各个分区
+
+This way, even if another table is partitioned (such as a customer table partitioned on last name), stored procedures can join the two tables, no matter what partition the procedure executes in.
+
+>Tables where all the records are available to all the partitions are called replicated tables. Note that tables are replicated by default. 
+
+所以，我们只要不指定分区，这些表默认都是复制表。
+
+关于(concerning)复制表的警告(caveat):
+
+复制表的优点在于它能够被每个分区读到。但是缺点是对复制表的任务修改或者写入，都必须一次对所有分区执行。这种多分区的存储（我理解的是一次性对所有分区修改或者写入）过程减少了并行处理性能，并影响了数据库吞吐。这也是为什么我们不应该将频繁更新的表作为复制表。
+
+### 第四部分 数据结构更新和稳固性（Durability）
+
+快速开发的时候可以通过关闭、启动、重新初始化等方式更新数据结构。但是数据已经在运行了，或者生产环境等情况下，就不能这么做了。
+
+#### 保存数据库
+
+VoltDB是个内存数据库，每次你通过init和start命令重新初始化并且启动的时候，都会启动一个新的空的database。显然在生产环境中你希望数据持久化。VoltDB提供了多种特性跨事务保存数据库。
+
+持久化数据库最简便的方式是使用`command logging`，企业版默认开启。`command logging`记录了所有的数据库活动，包括数据结构和数据的变化。如果数据库停了，通过`voltdb start`命令就可以恢复`command logging`。
+
+```Shell
+voltadmin shutdown
+voltdb start
+```
+
+`Command logging`让保存和恢复数据库简便并且自动。
+如果你使用的是社区版本或者没有使用`Command logging`，你可以通过快照（snapshot）来保存和恢复你的数据库。
+
+快照是数据库一种完全磁盘化的呈现，包含所有恢复数据库的数据。你可以在任何时间通过`voltadmin save`命令创建快照。
+
+默认情况下快照保存到database root目录的下级文件夹中。你可以在`oltadmin save`命令后面增加参数来指定快照的位置和名称。但是默认位置的快照有个好处就是，`voltdb start`命令会自动地恢复（restore）默认位置的快照。
+
+更简便些，可以在`shutdown`命令后面加上`--save`参数，这样voltdb在关闭的时候会创建一个最后的快照。社区版本推荐这种方式。
+
+```Shell
+voltadmin shutdown --save
+voltdb start
+```
