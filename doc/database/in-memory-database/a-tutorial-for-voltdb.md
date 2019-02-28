@@ -14,6 +14,7 @@
       - [启动一个single-server database](#%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AAsingle-server-database)
       - [关闭运行的VoltDB](#%E5%85%B3%E9%97%AD%E8%BF%90%E8%A1%8C%E7%9A%84voltdb)
   - [VoltDB入门示例](#voltdb%E5%85%A5%E9%97%A8%E7%A4%BA%E4%BE%8B)
+    - [引言](#%E5%BC%95%E8%A8%80)
     - [第一部分 创建数据库](#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93)
       - [加载数据结构](#%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84)
     - [第二部分 加载和管理数据](#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86-%E5%8A%A0%E8%BD%BD%E5%92%8C%E7%AE%A1%E7%90%86%E6%95%B0%E6%8D%AE)
@@ -25,6 +26,9 @@
       - [重复表](#%E9%87%8D%E5%A4%8D%E8%A1%A8)
     - [第四部分 数据结构更新和稳固性（Durability）](#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%9B%B4%E6%96%B0%E5%92%8C%E7%A8%B3%E5%9B%BA%E6%80%A7durability)
       - [保存数据库](#%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93)
+    - [第五部分 存储过程](#%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B)
+      - [简单的存储过程](#%E7%AE%80%E5%8D%95%E7%9A%84%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B)
+      - [复杂的存储过程](#%E5%A4%8D%E6%9D%82%E7%9A%84%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B)
 
 ## 安装VoltDB
 
@@ -188,6 +192,12 @@ voltdb start [--dir ~/mydb] [--background]
 ## VoltDB入门示例
 
 参考VoltDB下面的examples文件夹，可以找到一些示例（但是我参考的是官方tutorial文档）
+
+### 引言
+
+可以访问下方的地址获取教程中的相关数据
+
+`http://downloads.voltdb.com/technologies/other/tutorial_files_50.zip`
 
 ### 第一部分 创建数据库
 
@@ -448,3 +458,49 @@ voltdb start
 voltadmin shutdown --save
 voltdb start
 ```
+
+### 第五部分 存储过程
+
+#### 简单的存储过程
+
+简单的存错过程在这里是指一条sql可以解决的
+
+简单的存储过程可以通过`CREATE PROCEDURE 存储过程名称 AS`创建
+
+例如：
+
+```SQL
+CREATE PROCEDURE leastpopulated AS
+  SELECT TOP 1 county, abbreviation, population
+  FROM people, states WHERE people.state_num=?
+  AND people.state_num=states.state_num
+  ORDER BY population ASC;
+```
+
+我们可以通过分区键指定存储过程在哪个分区执行。
+
+我们可以在存储过程中多表关联，但是需要注意的是访问的所有表都需要使用的是相同的分区键并且分区键对应的值相同，或者访问的是复制表
+
+```SQL
+CREATE PROCEDURE leastpopulated
+  PARTITION ON TABLE people COLUMN state_num
+AS
+  SELECT TOP 1 county, abbreviation, population
+    FROM people, states WHERE people.state_num=?
+    AND people.state_num=states.state_num
+    ORDER BY population ASC;
+```
+
+使用存储过程
+
+```SQL
+exec leastpopulated 6;
+
+COUNTY ABBREVIATION POPULATION
+-------------- ------------- -----------
+Alpine County CA 1175
+```
+
+#### 复杂的存储过程
+
+voltdb复杂的存储过程是先用java语法
