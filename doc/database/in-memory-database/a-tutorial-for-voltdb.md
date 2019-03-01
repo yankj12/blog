@@ -29,6 +29,10 @@
     - [第五部分 存储过程](#%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B)
       - [简单的存储过程](#%E7%AE%80%E5%8D%95%E7%9A%84%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B)
       - [复杂的存储过程](#%E5%A4%8D%E6%9D%82%E7%9A%84%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B)
+  - [待研究问题](#%E5%BE%85%E7%A0%94%E7%A9%B6%E9%97%AE%E9%A2%98)
+    - [voltdb的表原理是怎么做的](#voltdb%E7%9A%84%E8%A1%A8%E5%8E%9F%E7%90%86%E6%98%AF%E6%80%8E%E4%B9%88%E5%81%9A%E7%9A%84)
+    - [voltdb中的key-value](#voltdb%E4%B8%AD%E7%9A%84key-value)
+    - [voltdb中的事务](#voltdb%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1)
 
 ## 安装VoltDB
 
@@ -504,3 +508,11 @@ Alpine County CA 1175
 #### 复杂的存储过程
 
 voltdb复杂的存储过程是先用java语法
+
+## 待研究问题
+
+### voltdb的表原理是怎么做的
+
+### voltdb中的key-value
+
+### voltdb中的事务
