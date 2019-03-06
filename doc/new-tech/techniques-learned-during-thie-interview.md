@@ -26,6 +26,8 @@ SpringSecurity, shiro
 
 redis缓存；redis发布订阅
 
+如何解决超买、超卖
+
 ## nginx
 
 nginx实现负载均衡和方向代理
