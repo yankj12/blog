@@ -27,6 +27,11 @@
   - [Windows上安装PG](#windows%E4%B8%8A%E5%AE%89%E8%A3%85pg)
   - [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
     - [宿主机上链接不到虚拟机中的pg](#%E5%AE%BF%E4%B8%BB%E6%9C%BA%E4%B8%8A%E9%93%BE%E6%8E%A5%E4%B8%8D%E5%88%B0%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E7%9A%84pg)
+  - [示例](#%E7%A4%BA%E4%BE%8B)
+    - [建表](#%E5%BB%BA%E8%A1%A8)
+    - [导入数据](#%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE)
+  - [PostgreSQL常用概念](#postgresql%E5%B8%B8%E7%94%A8%E6%A6%82%E5%BF%B5)
+  - [psql操作](#psql%E6%93%8D%E4%BD%9C)
 
 ## 前言
 
@@ -383,3 +388,52 @@ FATAL: no pg_hba.conf entry for host "192.168.19.1", user "postgres", database "
 ```
 
 宿主机连接虚拟机中pg，需要设置远程访问。还需要设置用户的密码
+
+## 示例
+
+### 建表
+
+数据类型参考`postgresql-11-A4.pdf`中`Part II. The SQL Language`部分`Chapter 8. Data Types`章节
+
+```sql
+CREATE TABLE towns (
+   town character(64),
+   state character(2),
+   state_num smallint NOT NULL,
+   county character(64),
+   county_num smallint NOT NULL,
+   elevation INTEGER
+);
+```
+
+### 导入数据
+
+```pg
+COPY towns
+FROM '/var/lib/postgresql/data/towns.txt' DELIMITER '|' CSV HEADER;
+```
+
+1. 在`COPY`关键字后指定表名`towns`
+2. 在`FROM`关键字后指定数据文件`/var/lib/postgresql/data/towns.txt`，因为使用的是文本文件，需要使用关键字`DELIMITER`和`CSV`
+3. 关键字`HEADER`表示数据文件有一行表头
+
+参考 [Import CSV File Into PosgreSQL Table](http://www.postgresqltutorial.com/import-csv-file-into-posgresql-table/)
+
+## PostgreSQL常用概念
+
+模式
+
+数据库
+
+参考 [PostgreSQL模式介绍](http://www.mamicode.com/info-detail-1394118.html)
+
+## psql操作
+
+```pg
+\dn [模式]       列出模式 (加 "+" 获取更多的信息)
+\dp [模式]       列出表, 视图, 序列的访问权限
+\l               列出所有数据库 (加 "+" 获取更多的信息)
+
+```
+
+参考 [psql操作手册](http://www.cnblogs.com/happyhotty/articles/1920455.html)
