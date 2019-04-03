@@ -99,3 +99,32 @@ VoltDB使用的内存可以分为三类：
 为了避免不可预期的风险，voltdb根据时间间隔可以定时自动地进行快照
 
 ### 13.3. 管理快照
+
+## 示例
+
+### 建表
+
+#### VoltDB数据类型
+
+具体语法参考 官方文档`UsingVoltDB.pdf`中的`CREATE TABLE`章节的`Description`部分
+
+或者参考官方网页文档 [CREATE TABLE](https://docs.voltdb.com/UsingVoltDB/ddlref_createtable.php)
+
+#### 符合索引
+
+To create a composite primary key from a combination of columns in a table, apply the PRIMARY KEY constraint to multiple columns with typical DDL such as the following:
+
+```SQL
+$ sqlcmd
+1> CREATE TABLE Customer (
+2>   FirstName VARCHAR(15),
+3>   LastName VARCHAR (15),
+4>   CONSTRAINT pkey PRIMARY KEY (FirstName, LastName)
+5> );
+```
+
+上文中`pkey`是约束的名称
+
+具体语法参考 官方文档`UsingVoltDB.pdf`中的`Appendix A. Supported SQL DDL Statements`章节中的`CREATE TABLE`部分
+
+或者参考官方网页文档 [Creating Tables and Primary Keys](https://docs.voltdb.com/UsingVoltDB/SchemaTables.php)
