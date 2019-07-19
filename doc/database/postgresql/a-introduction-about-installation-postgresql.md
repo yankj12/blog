@@ -1,37 +1,48 @@
 # 安装PostgreSQL
 
-- [安装PostgreSQL](#%E5%AE%89%E8%A3%85postgresql)
+- [安装PostgreSQL](#%E5%AE%89%E8%A3%85PostgreSQL)
   - [前言](#%E5%89%8D%E8%A8%80)
-  - [Ubuntu上二进制包安装PG](#ubuntu%E4%B8%8A%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8C%85%E5%AE%89%E8%A3%85pg)
-  - [Ubuntu上源码安装PG](#ubuntu%E4%B8%8A%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85pg)
+  - [Ubuntu上二进制包安装PG](#Ubuntu%E4%B8%8A%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8C%85%E5%AE%89%E8%A3%85PG)
+  - [Ubuntu上源码安装PG](#Ubuntu%E4%B8%8A%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85PG)
     - [环境准备](#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87)
     - [下载源码](#%E4%B8%8B%E8%BD%BD%E6%BA%90%E7%A0%81)
-    - [安装PG](#%E5%AE%89%E8%A3%85pg)
+    - [安装PG](#%E5%AE%89%E8%A3%85PG)
       - [configure](#configure)
       - [build](#build)
       - [install](#install)
     - [安装后配置](#%E5%AE%89%E8%A3%85%E5%90%8E%E9%85%8D%E7%BD%AE)
-      - [Shared Libraries](#shared-libraries)
-      - [Environment Variables](#environment-variables)
+      - [Shared Libraries](#Shared-Libraries)
+      - [Environment Variables](#Environment-Variables)
   - [启动和停止pg](#%E5%90%AF%E5%8A%A8%E5%92%8C%E5%81%9C%E6%AD%A2pg)
-    - [初始化PG](#%E5%88%9D%E5%A7%8B%E5%8C%96pg)
+    - [初始化PG](#%E5%88%9D%E5%A7%8B%E5%8C%96PG)
     - [启动pg](#%E5%90%AF%E5%8A%A8pg)
     - [停止pg](#%E5%81%9C%E6%AD%A2pg)
     - [pg_ctl的帮助文档](#pgctl%E7%9A%84%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3)
   - [其他设置](#%E5%85%B6%E4%BB%96%E8%AE%BE%E7%BD%AE)
     - [允许远程连接](#%E5%85%81%E8%AE%B8%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5)
     - [修改pg数据库用户postgres的密码](#%E4%BF%AE%E6%94%B9pg%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E6%88%B7postgres%E7%9A%84%E5%AF%86%E7%A0%81)
-      - [1.修改PostgreSQL数据库默认用户postgres的密码](#1%E4%BF%AE%E6%94%B9postgresql%E6%95%B0%E6%8D%AE%E5%BA%93%E9%BB%98%E8%AE%A4%E7%94%A8%E6%88%B7postgres%E7%9A%84%E5%AF%86%E7%A0%81)
+      - [1.修改PostgreSQL数据库默认用户postgres的密码](#1%E4%BF%AE%E6%94%B9PostgreSQL%E6%95%B0%E6%8D%AE%E5%BA%93%E9%BB%98%E8%AE%A4%E7%94%A8%E6%88%B7postgres%E7%9A%84%E5%AF%86%E7%A0%81)
       - [2.修改linux系统postgres用户的密码](#2%E4%BF%AE%E6%94%B9linux%E7%B3%BB%E7%BB%9Fpostgres%E7%94%A8%E6%88%B7%E7%9A%84%E5%AF%86%E7%A0%81)
-    - [启动PG数据库](#%E5%90%AF%E5%8A%A8pg%E6%95%B0%E6%8D%AE%E5%BA%93)
-  - [Windows上安装PG](#windows%E4%B8%8A%E5%AE%89%E8%A3%85pg)
+    - [安装PG文档精简版](#%E5%AE%89%E8%A3%85PG%E6%96%87%E6%A1%A3%E7%B2%BE%E7%AE%80%E7%89%88)
+      - [安装前linux环境准备](#%E5%AE%89%E8%A3%85%E5%89%8Dlinux%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87)
+      - [解压pg压缩包](#%E8%A7%A3%E5%8E%8Bpg%E5%8E%8B%E7%BC%A9%E5%8C%85)
+      - [编译安装](#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85)
+      - [修改配置文件](#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+      - [添加用户postgres](#%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7postgres)
+      - [初始化pg的database](#%E5%88%9D%E5%A7%8B%E5%8C%96pg%E7%9A%84database)
+      - [PG允许远程连接](#PG%E5%85%81%E8%AE%B8%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5)
+      - [修改PG数据库用户postgres的密码](#%E4%BF%AE%E6%94%B9PG%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E6%88%B7postgres%E7%9A%84%E5%AF%86%E7%A0%81)
+      - [启动和停止命令](#%E5%90%AF%E5%8A%A8%E5%92%8C%E5%81%9C%E6%AD%A2%E5%91%BD%E4%BB%A4)
+    - [启动PG数据库](#%E5%90%AF%E5%8A%A8PG%E6%95%B0%E6%8D%AE%E5%BA%93)
+  - [Windows上安装PG](#Windows%E4%B8%8A%E5%AE%89%E8%A3%85PG)
   - [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
     - [宿主机上链接不到虚拟机中的pg](#%E5%AE%BF%E4%B8%BB%E6%9C%BA%E4%B8%8A%E9%93%BE%E6%8E%A5%E4%B8%8D%E5%88%B0%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E7%9A%84pg)
   - [示例](#%E7%A4%BA%E4%BE%8B)
     - [建表](#%E5%BB%BA%E8%A1%A8)
     - [导入数据](#%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE)
-  - [PostgreSQL常用概念](#postgresql%E5%B8%B8%E7%94%A8%E6%A6%82%E5%BF%B5)
+  - [PostgreSQL常用概念](#PostgreSQL%E5%B8%B8%E7%94%A8%E6%A6%82%E5%BF%B5)
   - [psql操作](#psql%E6%93%8D%E4%BD%9C)
+    - [psql使用shell脚本操作postgres](#psql%E4%BD%BF%E7%94%A8shell%E8%84%9A%E6%9C%AC%E6%93%8D%E4%BD%9Cpostgres)
 
 ## 前言
 
@@ -288,7 +299,7 @@ Report bugs to <pgsql-bugs@postgresql.org>.
 
 ### 允许远程连接
 
-打开postgresql的服务启动配置文件`postgres.conf`，一般情况下在data文件夹下：
+打开postgresql的服务启动配置文件`postgres.conf`（有可能文件名为`postgresql.conf`）一般情况下在data文件夹下：
 
 找到`listen_address`配置节，把`local`改成`*`。如果`listen_address`被注释掉了，那么就要取消注释。
 
@@ -365,6 +376,130 @@ passwd: password updated successfully
 
 参考 [修改postgres密码](http://www.cnblogs.com/kaituorensheng/p/4735191.html)
 
+### 安装PG文档精简版
+
+#### 安装前linux环境准备
+
+```shell
+
+sudo apt install -y make gcc tar libreadline-dev zlib1g-dev libperl-dev libperl5.26 tcl8.5 flex bison perl6
+
+# 如果安装过python2.7，那么下面的额软件已经安装过了
+sudo apt install -y libpython-dev libpython2.7 libpython2.7-dev
+```
+
+#### 解压pg压缩包
+
+```shell
+gunzip postgresql-11.2.tar.gz
+tar xf postgresql-11.2.tar
+```
+
+#### 编译安装
+
+```shell
+cd postgresql-11.2
+
+./configure
+
+make world
+
+sudo make install-world
+```
+
+#### 修改配置文件
+
+```shell
+sudo vi /etc/profile
+
+# postgresql
+LD_LIBRARY_PATH=/usr/local/pgsql/lib
+export LD_LIBRARY_PATH
+
+PATH=/usr/local/pgsql/bin:$PATH
+export PATH
+
+MANPATH=/usr/local/pgsql/share/man:$MANPATH
+export MANPATH
+```
+
+#### 添加用户postgres
+
+```shell
+sudo useradd -m -s /bin/bash postgres
+
+sudo passwd postgres
+```
+
+#### 初始化pg的database
+
+```shell
+#切换到postgres用户
+
+su - postgres
+
+#创建data和log的文件夹
+mkdir data logs
+
+#初始化database
+initdb -D /home/postgres/data
+```
+
+#### PG允许远程连接
+
+打开postgresql的服务启动配置文件`postgres.conf`（有可能文件名为`postgresql.conf`）一般情况下在data文件夹下：
+
+找到`listen_address`配置节，把`local`改成`*`。如果`listen_address`被注释掉了，那么就要取消注释。
+
+打开postgresql的远程访问配置文件`pg_hba.conf`，一般情况下在data文件夹下：
+
+打开没有注释掉的代码
+把它改成：
+
+```pg_hba.conf
+host    all    all    0.0.0.0/0        password
+```
+
+#### 修改PG数据库用户postgres的密码
+
+修改pg数据库默认用户postgres的密码，需要两步：1、修改数据库用户的密码；1、修改linux用户的密码
+
+修改PostgreSQL数据库默认用户postgres的密码
+
+PostgreSQL数据库创建一个postgres用户作为数据库的管理员，密码随机，所以需要修改密码，方式如下：
+
+步骤一：登录PostgreSQL
+
+```shell
+sudo -u postgres psql
+```
+
+步骤二：修改登录PostgreSQL密码
+
+```psql
+ALTER USER postgres WITH PASSWORD 'postgres';
+```
+
+注：密码postgres要用引号引起来命令最后有分号
+
+步骤三：退出PostgreSQL客户端
+
+```psql
+\q
+```
+
+修改linux用户postgres用户，使用sudo passwd修改即可
+
+#### 启动和停止命令
+
+```shell
+#启动
+pg_ctl -D /home/postgres/data -l /home/postgres/logs/postgres.out start
+
+#停止
+pg_ctl -D /home/postgres/data stop
+```
+
 ### 启动PG数据库
 
 [Chapter 18. Server Setup and Operation](https://www.postgresql.org/docs/current/runtime.html)
@@ -437,3 +572,163 @@ FROM '/var/lib/postgresql/data/towns.txt' DELIMITER '|' CSV HEADER;
 ```
 
 参考 [psql操作手册](http://www.cnblogs.com/happyhotty/articles/1920455.html)
+
+### psql使用shell脚本操作postgres
+
+psql -U postgres -w -c "COPY rank TO '/etc/www.csv' WITH csv"
+
+形式就是  ： psql -U username -c 要执行的操作【一定要把操作写在引号内】
+
+```psql
+  -c, --command=COMMAND    run only single command (SQL or internal) and exit
+  -U, --username=USERNAME  database user name (default: "postgres")
+  -w, --no-password        never prompt for password
+  -W, --password           force password prompt (should happen automatically)
+```
+
+psql 操作的参数可以 --help
+
+```psql
+postgres@middleware:~$ psql --help
+psql is the PostgreSQL interactive terminal.
+
+Usage:
+  psql [OPTION]... [DBNAME [USERNAME]]
+
+General options:
+  -c, --command=COMMAND    run only single command (SQL or internal) and exit
+  -d, --dbname=DBNAME      database name to connect to (default: "postgres")
+  -f, --file=FILENAME      execute commands from file, then exit
+  -l, --list               list available databases, then exit
+  -v, --set=, --variable=NAME=VALUE
+                           set psql variable NAME to VALUE
+                           (e.g., -v ON_ERROR_STOP=1)
+  -V, --version            output version information, then exit
+  -X, --no-psqlrc          do not read startup file (~/.psqlrc)
+  -1 ("one"), --single-transaction
+                           execute as a single transaction (if non-interactive)
+  -?, --help[=options]     show this help, then exit
+      --help=commands      list backslash commands, then exit
+      --help=variables     list special variables, then exit
+
+Input and output options:
+  -a, --echo-all           echo all input from script
+  -b, --echo-errors        echo failed commands
+  -e, --echo-queries       echo commands sent to server
+  -E, --echo-hidden        display queries that internal commands generate
+  -L, --log-file=FILENAME  send session log to file
+  -n, --no-readline        disable enhanced command line editing (readline)
+  -o, --output=FILENAME    send query results to file (or |pipe)
+  -q, --quiet              run quietly (no messages, only query output)
+  -s, --single-step        single-step mode (confirm each query)
+  -S, --single-line        single-line mode (end of line terminates SQL command)
+
+Output format options:
+  -A, --no-align           unaligned table output mode
+  -F, --field-separator=STRING
+                           field separator for unaligned output (default: "|")
+  -H, --html               HTML table output mode
+  -P, --pset=VAR[=ARG]     set printing option VAR to ARG (see \pset command)
+  -R, --record-separator=STRING
+                           record separator for unaligned output (default: newline)
+  -t, --tuples-only        print rows only
+  -T, --table-attr=TEXT    set HTML table tag attributes (e.g., width, border)
+  -x, --expanded           turn on expanded table output
+  -z, --field-separator-zero
+                           set field separator for unaligned output to zero byte
+  -0, --record-separator-zero
+                           set record separator for unaligned output to zero byte
+
+Connection options:
+  -h, --host=HOSTNAME      database server host or socket directory (default: "local socket")
+  -p, --port=PORT          database server port (default: "5432")
+  -U, --username=USERNAME  database user name (default: "postgres")
+  -w, --no-password        never prompt for password
+  -W, --password           force password prompt (should happen automatically)
+
+For more information, type "\?" (for internal commands) or "\help" (for SQL
+commands) from within psql, or consult the psql section in the PostgreSQL
+documentation.
+
+```
+
+shell编写的informix数据库脚本
+
+```shell
+set `dbaccess $lv_dbname<<! 2>> ./test.log
+     SELECT count(*) FROM t_test WHERE ...;
+!`
+if [ $2 != 0 ]
+then
+  v_times=$2+1
+else
+  v_times=1
+fi
+```
+
+shell编写的postgres数据库脚本
+
+```shell
+result=`psql -d postgres -w -t << EOF 2>> ./test.log
+    SELECT count(*) FROM t_test WHERE ...;
+EOF`
+if [ $result != 0 ]
+then
+  v_times=$result+1
+else
+  v_times=1
+fi
+```
+
+informix的脚本中使用到了`$2`，意识是shell脚本后面传来的参数
+
+linux中shell变量$#,$@,$0,$1,$2的含义解释
+
+```markdown
+linux中shell变量$#,$@,$0,$1,$2的含义解释:
+变量说明:
+$$
+Shell本身的PID（ProcessID）
+$!
+Shell最后运行的后台Process的PID
+$?
+最后运行的命令的结束代码（返回值）
+$-
+使用Set命令设定的Flag一览
+$*
+所有参数列表。如"$*"用「"」括起来的情况、以"$1 $2 … $n"的形式输出所有参数。
+$@
+所有参数列表。如"$@"用「"」括起来的情况、以"$1" "$2" … "$n" 的形式输出所有参数。
+$#
+添加到Shell的参数个数
+$0
+Shell本身的文件名
+$1～$n
+添加到Shell的各参数值。$1是第1参数、$2是第2参数…。
+
+示例：
+1 #!/bin/bash
+ 2 #
+ 3 printf "The complete list is %s\n" "$$"
+ 4 printf "The complete list is %s\n" "$!"
+ 5 printf "The complete list is %s\n" "$?"
+ 6 printf "The complete list is %s\n" "$*"
+ 7 printf "The complete list is %s\n" "$@"
+ 8 printf "The complete list is %s\n" "$#"
+ 9 printf "The complete list is %s\n" "$0"
+10 printf "The complete list is %s\n" "$1"
+11 printf "The complete list is %s\n" "$2
+
+结果：
+[Aric@localhost ~]$ bash params.sh 123456 QQ
+The complete list is 24249
+The complete list is
+The complete list is 0
+The complete list is 123456 QQ
+The complete list is 123456
+The complete list is QQ
+The complete list is 2
+The complete list is params.sh
+The complete list is 123456
+The complete list is QQ
+```
