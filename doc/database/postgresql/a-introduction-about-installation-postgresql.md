@@ -17,6 +17,7 @@
     - [初始化PG](#%E5%88%9D%E5%A7%8B%E5%8C%96PG)
     - [启动pg](#%E5%90%AF%E5%8A%A8pg)
     - [停止pg](#%E5%81%9C%E6%AD%A2pg)
+    - [创建用户](#%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7)
     - [pg_ctl的帮助文档](#pgctl%E7%9A%84%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3)
   - [其他设置](#%E5%85%B6%E4%BB%96%E8%AE%BE%E7%BD%AE)
     - [允许远程连接](#%E5%85%81%E8%AE%B8%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5)
@@ -243,6 +244,8 @@ postgres@middleware:~$ pg_ctl -D /usr/local/pgsql/data -l /var/lib/postgresql/pg
 ```Shell
 postgres@middleware:~$ pg_ctl -D /usr/local/pgsql/data stop
 ```
+
+### 创建用户
 
 ### pg_ctl的帮助文档
 
@@ -650,6 +653,14 @@ For more information, type "\?" (for internal commands) or "\help" (for SQL
 commands) from within psql, or consult the psql section in the PostgreSQL
 documentation.
 
+```
+
+通过`\?`查看命令的帮助文档，但是输出内容太多，不知道设置的是more翻页，还是less翻页。设置翻页工具为less，之后ctrl+f向前一页，ctrl+b向后一页，如下：
+
+```shell
+# One additional tip is to add less to PAGER environment variable if you want to use less rather than more. So simply add following row to profile (/etc/profile or ~/.profile):
+
+export PAGER=less
 ```
 
 shell编写的informix数据库脚本
