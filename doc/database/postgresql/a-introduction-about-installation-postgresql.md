@@ -44,6 +44,7 @@
   - [PostgreSQL常用概念](#PostgreSQL%E5%B8%B8%E7%94%A8%E6%A6%82%E5%BF%B5)
   - [psql操作](#psql%E6%93%8D%E4%BD%9C)
     - [psql使用shell脚本操作postgres](#psql%E4%BD%BF%E7%94%A8shell%E8%84%9A%E6%9C%AC%E6%93%8D%E4%BD%9Cpostgres)
+    - [psqlrc配置文件](#psqlrc%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
 
 ## 前言
 
@@ -662,6 +663,18 @@ documentation.
 
 export PAGER=less
 ```
+
+### psqlrc配置文件
+
+参考 [psql使用](https://blog.csdn.net/aoerqileng/article/details/41173955)
+
+psql运行的时候读取一个叫psqlrc的配置文件。当psql启动时候，它会查找这个文件运行文件中的命令来初始化环境。
+
+在unix系统上文件叫.psqlrc在home目录下。在windows上该文件叫psqlrc.conf，在%APP-DATA%\postgresql目录下。通常是c:\User\your_login\AppData\Roaming\postgresql
+
+通常该文件是没有的，需要你手工去创建，该文件中任何的设置都会覆盖psql默认值。
+
+如果在启动psql的时候不想检查psqlrc,使用-X参数。
 
 shell编写的informix数据库脚本
 
