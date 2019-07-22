@@ -41,10 +41,18 @@
   - [示例](#%E7%A4%BA%E4%BE%8B)
     - [建表](#%E5%BB%BA%E8%A1%A8)
     - [导入数据](#%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE)
+    - [编写数据库脚本](#%E7%BC%96%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%84%9A%E6%9C%AC)
+      - [shell编写的informix数据库脚本](#shell%E7%BC%96%E5%86%99%E7%9A%84informix%E6%95%B0%E6%8D%AE%E5%BA%93%E8%84%9A%E6%9C%AC)
+      - [shell编写的postgres数据库脚本](#shell%E7%BC%96%E5%86%99%E7%9A%84postgres%E6%95%B0%E6%8D%AE%E5%BA%93%E8%84%9A%E6%9C%AC)
   - [PostgreSQL常用概念](#PostgreSQL%E5%B8%B8%E7%94%A8%E6%A6%82%E5%BF%B5)
   - [psql操作](#psql%E6%93%8D%E4%BD%9C)
     - [psql使用shell脚本操作postgres](#psql%E4%BD%BF%E7%94%A8shell%E8%84%9A%E6%9C%AC%E6%93%8D%E4%BD%9Cpostgres)
     - [psqlrc配置文件](#psqlrc%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+    - [psql命令](#psql%E5%91%BD%E4%BB%A4)
+    - [几个概念](#%E5%87%A0%E4%B8%AA%E6%A6%82%E5%BF%B5)
+      - [database](#database)
+      - [schema模式](#schema%E6%A8%A1%E5%BC%8F)
+  - [pg逻辑复制](#pg%E9%80%BB%E8%BE%91%E5%A4%8D%E5%88%B6)
 
 ## 前言
 
@@ -558,6 +566,89 @@ FROM '/var/lib/postgresql/data/towns.txt' DELIMITER '|' CSV HEADER;
 
 参考 [Import CSV File Into PosgreSQL Table](http://www.postgresqltutorial.com/import-csv-file-into-posgresql-table/)
 
+### 编写数据库脚本
+
+#### shell编写的informix数据库脚本
+
+```shell
+set `dbaccess $lv_dbname<<! 2>> ./test.log
+     SELECT count(*) FROM t_test WHERE ...;
+!`
+if [ $2 != 0 ]
+then
+  v_times=$2+1
+else
+  v_times=1
+fi
+```
+
+#### shell编写的postgres数据库脚本
+
+```shell
+result=`psql -d postgres -w -t << EOF 2>> ./test.log
+    SELECT count(*) FROM t_test WHERE ...;
+EOF`
+if [ $result != 0 ]
+then
+  v_times=$result+1
+else
+  v_times=1
+fi
+```
+
+informix的脚本中使用到了`$2`，意识是shell脚本后面传来的参数
+
+linux中shell变量$#,$@,$0,$1,$2的含义解释
+
+```markdown
+linux中shell变量$#,$@,$0,$1,$2的含义解释:
+变量说明:
+$$
+Shell本身的PID（ProcessID）
+$!
+Shell最后运行的后台Process的PID
+$?
+最后运行的命令的结束代码（返回值）
+$-
+使用Set命令设定的Flag一览
+$*
+所有参数列表。如"$*"用「"」括起来的情况、以"$1 $2 … $n"的形式输出所有参数。
+$@
+所有参数列表。如"$@"用「"」括起来的情况、以"$1" "$2" … "$n" 的形式输出所有参数。
+$#
+添加到Shell的参数个数
+$0
+Shell本身的文件名
+$1～$n
+添加到Shell的各参数值。$1是第1参数、$2是第2参数…。
+
+示例：
+1 #!/bin/bash
+ 2 #
+ 3 printf "The complete list is %s\n" "$$"
+ 4 printf "The complete list is %s\n" "$!"
+ 5 printf "The complete list is %s\n" "$?"
+ 6 printf "The complete list is %s\n" "$*"
+ 7 printf "The complete list is %s\n" "$@"
+ 8 printf "The complete list is %s\n" "$#"
+ 9 printf "The complete list is %s\n" "$0"
+10 printf "The complete list is %s\n" "$1"
+11 printf "The complete list is %s\n" "$2
+
+结果：
+[Aric@localhost ~]$ bash params.sh 123456 QQ
+The complete list is 24249
+The complete list is
+The complete list is 0
+The complete list is 123456 QQ
+The complete list is 123456
+The complete list is QQ
+The complete list is 2
+The complete list is params.sh
+The complete list is 123456
+The complete list is QQ
+```
+
 ## PostgreSQL常用概念
 
 模式
@@ -676,83 +767,163 @@ psql运行的时候读取一个叫psqlrc的配置文件。当psql启动时候，
 
 如果在启动psql的时候不想检查psqlrc,使用-X参数。
 
-shell编写的informix数据库脚本
+### psql命令
 
-```shell
-set `dbaccess $lv_dbname<<! 2>> ./test.log
-     SELECT count(*) FROM t_test WHERE ...;
-!`
-if [ $2 != 0 ]
-then
-  v_times=$2+1
-else
-  v_times=1
-fi
+psql命令，可以通过`\h` , `\?`等帮助命令查看
+
+```psql
+
+Informational
+  (options: S = show system objects, + = additional detail)
+  \d[S+]                 list tables, views, and sequences
+  \d[S+]  NAME           describe table, view, sequence, or index
+
+  \db[+]  [PATTERN]      list tablespaces
+
+  \dD[S+] [PATTERN]      list domains
+
+  \dg[S+] [PATTERN]      list roles
+  \di[S+] [PATTERN]      list indexes
+
+  \dm[S+] [PATTERN]      list materialized views
+  \dn[S+] [PATTERN]      list schemas
+
+  \ds[S+] [PATTERN]      list sequences
+  \dt[S+] [PATTERN]      list tables
+  \dT[S+] [PATTERN]      list data types
+  \du[S+] [PATTERN]      list roles
+  \dv[S+] [PATTERN]      list views
+
+  \l[+]   [PATTERN]      list databases
+
+# \db[+]  [PATTERN]      list tablespaces
+postgres=# \db
+       List of tablespaces
+    Name    |  Owner   | Location 
+------------+----------+----------
+ pg_default | postgres | 
+ pg_global  | postgres | 
+(2 rows)
+
+# \dD[S+] [PATTERN]      list domains
+postgres=# \dD
+                        List of domains
+ Schema | Name | Type | Collation | Nullable | Default | Check 
+--------+------+------+-----------+----------+---------+-------
+(0 rows)
+
+# \dg[S+] [PATTERN]      list roles
+postgres=# \dg
+                                   List of roles
+ Role name |                         Attributes                         | Member of 
+-----------+------------------------------------------------------------+-----------
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+
+# \dm[S+] [PATTERN]      list materialized views
+postgres=# \dm
+Did not find any relations.
+
+# \dn[S+] [PATTERN]      list schemas
+postgres=# \dn
+  List of schemas
+  Name  |  Owner   
+--------+----------
+ public | postgres
+(1 row)
+
+# \du[S+] [PATTERN]      list roles
+postgres=# \du
+                                   List of roles
+ Role name |                         Attributes                         | Member of 
+-----------+------------------------------------------------------------+-----------
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+
+# \l[+]   [PATTERN]      list databases
+postgres=# \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ postgres  | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ template0 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
+           |          |          |             |             | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
+           |          |          |             |             | postgres=CTc/postgres
+(3 rows)
+
+postgres=# 
 ```
 
-shell编写的postgres数据库脚本
+### 几个概念
 
-```shell
-result=`psql -d postgres -w -t << EOF 2>> ./test.log
-    SELECT count(*) FROM t_test WHERE ...;
-EOF`
-if [ $result != 0 ]
-then
-  v_times=$result+1
-else
-  v_times=1
-fi
-```
+database, domain, tablespace, role, schema
 
-informix的脚本中使用到了`$2`，意识是shell脚本后面传来的参数
+#### database
 
-linux中shell变量$#,$@,$0,$1,$2的含义解释
+创建database
+进入psql后，\h查看帮助命令，发现create database命令可以创建database
 
-```markdown
-linux中shell变量$#,$@,$0,$1,$2的含义解释:
-变量说明:
-$$
-Shell本身的PID（ProcessID）
-$!
-Shell最后运行的后台Process的PID
-$?
-最后运行的命令的结束代码（返回值）
-$-
-使用Set命令设定的Flag一览
-$*
-所有参数列表。如"$*"用「"」括起来的情况、以"$1 $2 … $n"的形式输出所有参数。
-$@
-所有参数列表。如"$@"用「"」括起来的情况、以"$1" "$2" … "$n" 的形式输出所有参数。
-$#
-添加到Shell的参数个数
-$0
-Shell本身的文件名
-$1～$n
-添加到Shell的各参数值。$1是第1参数、$2是第2参数…。
+在psql中create database test;
 
-示例：
-1 #!/bin/bash
- 2 #
- 3 printf "The complete list is %s\n" "$$"
- 4 printf "The complete list is %s\n" "$!"
- 5 printf "The complete list is %s\n" "$?"
- 6 printf "The complete list is %s\n" "$*"
- 7 printf "The complete list is %s\n" "$@"
- 8 printf "The complete list is %s\n" "$#"
- 9 printf "The complete list is %s\n" "$0"
-10 printf "The complete list is %s\n" "$1"
-11 printf "The complete list is %s\n" "$2
+\c test切换到test数据库
+postgres=# \c test
+You are now connected to database "test" as user "postgres".
 
-结果：
-[Aric@localhost ~]$ bash params.sh 123456 QQ
-The complete list is 24249
-The complete list is
-The complete list is 0
-The complete list is 123456 QQ
-The complete list is 123456
-The complete list is QQ
-The complete list is 2
-The complete list is params.sh
-The complete list is 123456
-The complete list is QQ
-```
+#### schema模式
+
+[schema模式-postgres-11.4官方文档](https://www.postgresql.org/docs/11/ddl-schemas.html)
+
+一个database中有一个或者多个schema，schema中包含table和其他种类的数据库对象（比如data types，functions， operators等），同一个数据库object可以包含在不同的schema中，但是同一个数据库object只能在一个databse中。
+
+下面几种场景中我们使用schema
+
+- 允许多个用户使用同一个database而不相互影响、相互影响
+- 以逻辑组的形式管理数据库对象，使他们更加方便管理
+- 第三方应用可以运行在分隔的schema中，这样他们不会和其他对象的名称冲突
+
+schema类似于操作系统级别的目录，只是模式不能嵌套。
+
+>Postgresql的Schema(模式)的出现是出于什么目的，不理解schema的具体用途？\
+问：\
+既然Postgresql支持创建多个schema，schema里面可以创建表、视图、函数、存储过程等，那么如果我不创建新的数据库，就用postgresql自带的Postgres库把所有创建库的需求用创建schema来代替，在schema里面进行建表，查询等很多数据库操作，那这样的话会不会有什么缺陷，这种方案是否可行？
+请各位大牛指点。\
+答：\
+我个人认为在大部分应用场景下，题主的想法在我们进行数据库设计时是可行的。但是如果你的应用场景中包含以下需求时，那么你可以优先考虑创建一个新的Database，而不是Schema。\
+1.如果你希望对一组数据表的文字编码/排序规则 的默认行为进行定制时，你应该考虑将这组数据表(以及响应的数据库对象)放入一个新建的Database中，而不是一个Schema中. 如果是同一个Database下的不同Schema，那么在这些Schema中建立的数据表共享相同的规则。\
+2.如果你希望能够对一组数据库表(或Function等数据库对象)的并发数进行单独控制时，你应该考虑将这组数据库对象放入一个新建的Database，而不是一个Schema中。因为在PostgreSQL中，可以对单个Database的最大并发访问的会话数进行单独控制，而Schema只是一个纯逻辑的层次，因此它不具备相应的控制粒度。\
+3.如果你希望对一组数据库表(或Function等数据库对象)的访问进行严格隔离，而不仅仅是通过SQL层面的PRIVILEDGE来控制。那么你应该考虑将这组数据库对象放入一个新建的Database，而不是一个Schema中。这是因为在PostgreSQL中，对于Access控制，除了SQL级别的权限控制之外，还可以在pg_hba.conf配置文件中进行会话级别的认证控制。\
+\
+综上所述， 由于Schema是一个纯逻辑层面的概念，类似于“命名空间”的概念，因此，确实可以按照题主的说法基于不同的Schema对业务所需的数据库对象进行SQL级别的权限归类。但是，如果数据库设计中对于数据库对象的集合除了基于SQL的权限分类外还有诸如以上的特殊需求时，则应当考虑将这些数据库对象定义在一个新的Database中。\
+以上回答经过精简，原回答参考下面链接\
+https://segmentfault.com/q/1010000010303335
+
+test=# create schema test_sch;  
+CREATE SCHEMA
+test=# \dn
+   List of schemas
+   Name   |  Owner   
+----------+----------
+ public   | postgres
+ test_sch | postgres
+(2 rows)
+
+下面这种方式创建的表在myschema这个模式中
+
+CREATE TABLE myschema.mytable (
+ ...
+);
+
+下面这种方式创建的表在public这个模式中
+
+CREATE TABLE mytable (
+ ...
+);
+
+模式和权限
+
+A user can also be allowed to create objects in someone else's schema. To allow that, the CREATE privilege on the schema needs to be granted. Note that by default, everyone has CREATE and USAGE privileges on the schema public. This allows all users that are able to connect to a given database to create objects in its public schema. If you do not want to allow that, you can revoke that privilege:
+
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+
+## pg逻辑复制
+
+[Chapter 31. Logical Replication](https://www.postgresql.org/docs/11/logical-replication.html)
